@@ -1,12 +1,12 @@
 import { signOut } from '@/app/(authorized)/dashboard/_actions';
-import { session } from '@/app/_hooks/use-session';
+import { auth } from '@/app/_fetchers/auth';
 
 export default async function Page() {
-  const { user } = await session();
+  const user = await auth.getLoggedInUser();
 
   return (
     <main className="relative min-h-screen bg-blue-500 p-8">
-      <h1 className="pb-4 text-3xl text-white">Hello @{user.username}!</h1>
+      <h1 className="pb-4 text-3xl text-white">Hello {user.username}!</h1>
       <h2 className="pb-10 text-xl text-white">This is your space.</h2>
       <form action={signOut}>
         <button

@@ -17,7 +17,7 @@ export function SignUpForm() {
     status: 'idle',
   });
 
-  const isError = state.status === 'error' || state.status === 'api-error';
+  const isError = state.status === 'error';
 
   return (
     <>

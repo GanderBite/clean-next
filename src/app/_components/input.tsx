@@ -1,4 +1,4 @@
-import { cn } from '@/lib/shared';
+import { cn } from '../_utils/cn';
 
 type Props = {
   error?: string[] | string | false;

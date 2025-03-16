@@ -1,9 +1,9 @@
 'use server';
 
-import type { ActionState } from '@/lib/shared';
+import type { ActionState } from '@/app/_types/action-state.types';
 
+import { parseErrorToActionError } from '@/app/_utils/parse-error-to-action-error';
 import { RedirectType, redirect } from 'next/navigation';
-import { handleActionErrors } from '@/lib/shared';
 import { cookies } from 'next/headers';
 import { api } from '@/lib';
 
@@ -15,22 +15,17 @@ type Form = {
 type State = ActionState<Form>;
 
 export async function signIn(
-  _prevState: State,
+  prevState: State,
   formData: FormData,
 ): Promise<State> {
   const form = Object.fromEntries(formData.entries()) as Form;
 
   try {
-    const { expiresAt, token } = await api.auth.signIn(form);
+    const cookie = await api.auth.signIn(form);
 
-    (await cookies()).set('session', token, {
-      expires: expiresAt,
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: true,
-    });
+    (await cookies()).set(cookie.name, cookie.value, cookie.attributes);
   } catch (err) {
-    return handleActionErrors(err, form);
+    return parseErrorToActionError(prevState, err);
   }
 
   redirect(`/dashboard`, RedirectType.replace);
